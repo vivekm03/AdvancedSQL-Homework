@@ -101,7 +101,27 @@ def tobs():
 
     return jsonify(all_tobs)
 
+@app.route("/api/v1.0/<start>")
+def tstats(stdt):
+    sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
+    tstats_res=session.query(*sel).filter(Measurement.date >= stdt).all()
+            
+    # Convert the query results to a Dictionary.
+    for tempstat in tstats_res:
+        ts_dict=dict(tempstat)
+    
+    return jsonify(ts_dict)  
 
+@app.route("/api/v1.0/<start>/<end>")
+def tstats1(stdt, endt):
+    sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
+    tstats1_res=session.query(*sel).filter(Measurement.date >= stdt).filter(Measurement.date <= endt).all()
+            
+    # Convert the query results to a Dictionary.
+    for tempstat1 in tstats1_res:
+        ts_dict1=dict(tempstat1)
+    
+    return jsonify(ts_dict1)  
 
 if __name__ == '__main__':
     app.run(debug=True)
